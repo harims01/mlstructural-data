@@ -2,36 +2,21 @@ import re
 import pandas as pd
 
 def clean_text(text: str) -> str:
-    cleaned = text.replace('\n', ' ')
-    cleaned = re.sub(r'\s+', ' ', cleaned)
-    return cleaned.strip()
+    """Clean the raw extracted text."""
+    cleaned = text.replace('\n', ' ')                  # Remove newlines
+    cleaned = re.sub(r'\s+', ' ', cleaned)             # Collapse multiple spaces
+    cleaned = cleaned.strip()
+    return cleaned
 
-def extract_customers(text):
-    return re.findall(r"(Dr|Mr|Ms|Mrs)\.?\s+[A-Za-z.\s]+", text)
+def structure_to_table(text: str) -> pd.DataFrame:
+    """
+    Convert cleaned text into line-by-line readable format.
+    Each sentence or block becomes a row in a one-column DataFrame.
+    """
+    # Break text into sentences or key blocks
+    lines = re.split(r'(?<=[.?!])\s+', text)
+    lines = [line.strip() for line in lines if line.strip()]
+    return pd.DataFrame({"Extracted Info": lines})
 
-def extract_reference_numbers(text):
-    return re.findall(r"\b\d{3,5}\s+[A-Z0-9]+\b", text)
 
-def extract_amounts(text):
-    return re.findall(r"\$\s?[A-Za-z0-9\s,.]+", text)
 
-def extract_percentages(text):
-    return re.findall(r"\d+\.?\d*\s?%", text)
-
-def extract_durations(text):
-    return re.findall(r"\d+\s+(Years|Months)", text)
-
-def structure_to_table(text):
-    from itertools import zip_longest
-    data = list(zip_longest(
-        extract_customers(text),
-        extract_reference_numbers(text),
-        extract_amounts(text),
-        extract_percentages(text),
-        extract_durations(text),
-        fillvalue="Not Found"
-    ))
-
-    return pd.DataFrame(data, columns=[
-        "Customer Name", "Reference Number", "Amount", "Interest %", "Loan Duration"
-    ])
