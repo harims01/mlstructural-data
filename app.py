@@ -1,4 +1,3 @@
-# 📁 project/app.py
 import streamlit as st
 from backend.ocr_engine import extract_text_image, extract_text_pdf, extract_text_docx
 from backend.cleaner import clean_text, structure_to_table
@@ -24,11 +23,10 @@ if uploaded_file is not None:
     elif uploaded_file.type == "application/pdf":
         text = extract_text_pdf(temp_path)
     elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        text = extract_text_docx(temp_path)
+     text = extract_text_docx(temp_path)
     else:
         st.error("Unsupported file type")
-        st.stop()
-
+        st.stop() 
     cleaned = clean_text(text)
     st.code(cleaned, language="text")
 
@@ -60,6 +58,10 @@ with col2:
             file_name="structured_output.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+
+
+
+
 
 
 
