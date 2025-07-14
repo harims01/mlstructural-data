@@ -3,26 +3,25 @@ import pandas as pd
 import tempfile
 import io
 
-# ✅ Import updated modules
+# ✅ Import project modules
 from backend.ocr_engine import extract_text_image, extract_text_pdf, extract_text_docx
 from backend.cleaner import smart_structure
 from backend.db_ops import save_to_mongo
-from backend.export_excel import save_to_excel
 
-# 🌐 Streamlit page setup
+# 🌐 Streamlit app config
 st.set_page_config(page_title="Unstructured to Structured Extractor", layout="wide")
 st.title("📄 Intelligent Document Structuring App")
 
-# 📤 Upload section
+# 📤 Upload file
 uploaded_file = st.file_uploader("Upload an image / PDF / Word document", type=["png", "jpg", "jpeg", "pdf", "docx"])
 
 if uploaded_file is not None:
-    # Save uploaded file temporarily
+    # Save file temporarily
     with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         tmp_file.write(uploaded_file.read())
         temp_path = tmp_file.name
 
-    # 🧠 Extract text based on file type
+    # 🧠 Text Extraction
     try:
         if uploaded_file.type.startswith("image"):
             text = extract_text_image(temp_path)
@@ -37,12 +36,16 @@ if uploaded_file is not None:
         st.error(f"Error extracting text: {e}")
         st.stop()
 
-    # 📊 Structured Table Preview using Smart Structure
+    # 🧹 Show Raw Text
+    st.subheader("🧹 Extracted Raw Text")
+    st.code(text, language="text")
+
+    # 📊 Show Structured Table
     st.subheader("📊 Structured Preview")
     df = smart_structure(text)
     st.dataframe(df, use_container_width=True)
 
-    # ⬇️ Export Section
+    # ⬇️ Export Buttons
     st.subheader("⬇️ Export Options")
     col1, col2 = st.columns(2)
 
@@ -62,4 +65,3 @@ if uploaded_file is not None:
                 file_name="structured_output.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
-
