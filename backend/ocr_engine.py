@@ -3,13 +3,12 @@ from PIL import Image
 import fitz  # PyMuPDF
 import docx
 import platform
-import os
 
-# ✅ Automatically set tesseract path for Windows or Linux
+# ✅ Automatically set Tesseract path based on OS
 if platform.system() == "Windows":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-else:  # Streamlit Cloud uses Linux
-    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+else:
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # Streamlit Cloud
 
 def extract_text_image(img_path):
     try:
