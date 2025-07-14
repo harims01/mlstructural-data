@@ -5,11 +5,11 @@ import docx
 import platform
 import os
 
-# Dynamically configure path for Tesseract
+# ✅ Automatically set tesseract path for Windows or Linux
 if platform.system() == "Windows":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-elif platform.system() == "Linux":
-    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"  # Path in Streamlit Cloud
+else:  # Streamlit Cloud uses Linux
+    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 
 def extract_text_image(img_path):
     try:
