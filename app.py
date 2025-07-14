@@ -3,9 +3,9 @@ import pandas as pd
 import tempfile
 import io
 
-# ✅ Import your own modules
+# ✅ Import updated modules
 from backend.ocr_engine import extract_text_image, extract_text_pdf, extract_text_docx
-from backend.cleaner import clean_text, structure_to_table
+from backend.cleaner import smart_structure
 from backend.db_ops import save_to_mongo
 from backend.export_excel import save_to_excel
 
@@ -37,14 +37,9 @@ if uploaded_file is not None:
         st.error(f"Error extracting text: {e}")
         st.stop()
 
-    # 🧹 Cleaned Text
-    cleaned = clean_text(text)
-    st.subheader("🧹 Cleaned Text")
-    st.code(cleaned)
-
-    # 📊 Structured DataFrame using regex
-    df = structure_to_table(cleaned)
+    # 📊 Structured Table Preview using Smart Structure
     st.subheader("📊 Structured Preview")
+    df = smart_structure(text)
     st.dataframe(df, use_container_width=True)
 
     # ⬇️ Export Section
@@ -67,3 +62,4 @@ if uploaded_file is not None:
                 file_name="structured_output.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
+
